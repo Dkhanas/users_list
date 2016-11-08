@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head></head>
+<body>
+<span>
+<input type="submit" id="created" value="ASC" name="created">
+Created
+</span>
+<span>
+<input type="submit" value="ASC" id="counts" name="counts">
+Counts
+</span>
+<div id="all_data">
+    {% for user in users %}
+        <p>
+            <span> {{ user.get_full_name }}</span>
+            <span> {{ user.phone }}</span>
+            <span> {{ user.address }}</span>
+            <span>{{ user.author.all|length }}</span>
+            <span>{{ user.author.all|first }}</span>
+        </p>
+    {% endfor %}
+</div>
+<form method="GET">
+    {{ form }}
+    <input type="submit" value="search">
+</form>
+
+{% if search_results %}
+    {% for res in search_results %}
+        {{ res }}
+    {% endfor %}
+{% endif %}
+</body>
+<script src="http://code.jquery.com/jquery-latest.pack.js"></script>
+<script src="js/jquery-ui-1.8.23.custom.min.js"></script>
+<script>
+    $('#created').click(function () {
+        var sort_by = {}
+        var attr_name = $('#created').attr('name');
+        sort_by[attr_name] = $('#created').val();
+        $.ajax({
+            type: "GET",
+            url: '/',
+            data: sort_by,
+            dataType: 'json',
+            success: function (data) {
+                resp = JSON.parse(data['ASC']);
+                console.log(resp);
+                $('#all_data').html('');
+                if (resp) {
+                    console.log(resp.length)
+                    for (var i = 0; i < resp.length; i++) {
+                        $.each(resp[i], function (key, value) {
+                            $('#all_data').append('<p></p>');
+                            $('#all_data p').append('<span>' + value + '</span>');
+                        });
+                    }
+                }
+
+            }
+
+        });
+    });
+</script>
+</html>
